@@ -1,0 +1,148 @@
+{% extends 'asset/base.html' %}
+
+{% block content %}
+
+<!-- Table -->
+<div class="row">
+    <div class="col-md-10 col-12 mx-auto mt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>Your Art Collection</h1>
+            <a href="{% url 'add-item' %}" class="btn btn-primary">+ Add Item</a>
+        </div>
+        <hr>
+
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Artist</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Purchase Date</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if items|length == 0 %}
+                <tr>
+                    <td colspan="8" class="text-center">No items found</td>
+                </tr>
+                {% endif %}
+
+                {% for item in items %}
+                <tr class="clickable-row" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#viewDetailsModal"
+                    data-id="{{ item.id }}"
+                    data-name="{{ item.name }}"
+                    data-category="{{ item.category.name }}"
+                    data-description="{{ item.description }}"
+                    data-purchase-date="{{ item.purchase_date }}"
+                    data-dimension="{{ item.dimension }}"
+                    data-artist="{{ item.artist }}"
+                    data-image-url="{% if item.image %}{{ item.image.url }}{% endif %}">
+                    
+                   
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.category.name }}</td>
+                    <td class="text-truncate" style="max-width: 250px">{{ item.description }}</td>
+                    <td>{{ item.artist }}</td>
+                    <td>
+                        <!--if there isn't an image found display no image text-->
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="img-fluid" style="max-width: 100%; height: auto;">
+                        {% else %}
+                            No Image
+                        {% endif %}
+                    </td>
+                    <td>{{ item.purchase_date }}</td>
+                    <td>
+                        <a href="{% url 'edit-item' item.id %}" class="btn btn-outline-secondary">Edit</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'delete-item' item.id %}" class="btn btn-secondary">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+ <!--using bootswatch component starter code-->
+<div class="modal fade" id="viewDetailsModal" tabindex="-1" aria-labelledby="viewDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewDetailsModalLabel">Artwork Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="card mb-3">
+                    <img id="modalImage" src="" class="card-img-top" alt="Artwork Image" style="max-height: 400px; object-fit: cover;">
+                    
+                    <div class="card-body">
+                        <h3 class="card-title" id="modalName"></h3>
+                        <h6 class="card-subtitle text-muted pb-3" id="modalCategory"></h6>
+                        <p class="card-text" id="modalDescription"></p>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Artist:</strong> <span id="modalArtist"></span></li>
+                        <li class="list-group-item"><strong>Dimensions:</strong> <span id="modalDimension"></span></li>
+                        <li class="list-group-item"><strong>Purchase Date:</strong> <span id="modalPurchaseDate"></span></li>
+                    </ul>
+                    
+                    <div class="card-footer text-muted">
+                        Added to Collection
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // event listener for row clicks
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.clickable-row').forEach(function (row) {
+            row.addEventListener('click', function () {
+                // row data attributes
+                const name = row.dataset.name;
+                const category = row.dataset.category;
+                const description = row.dataset.description;
+                const purchaseDate = row.dataset.purchaseDate;
+                const dimension = row.dataset.dimension || 'N/A';
+                const artist = row.dataset.artist || 'Unknown';
+                const imageUrl = row.dataset.imageUrl || '';
+
+                // populate modal with data
+                document.getElementById('modalName').innerText = name;
+                document.getElementById('modalCategory').innerText = category;
+                document.getElementById('modalDescription').innerText = description;
+                document.getElementById('modalDimension').innerText = dimension;
+                document.getElementById('modalArtist').innerText = artist;
+                document.getElementById('modalPurchaseDate').innerText = purchaseDate;
+
+                // display image if available, otherwise hide the img tag
+                const modalImage = document.getElementById('modalImage');
+                if (imageUrl) {
+                    modalImage.src = imageUrl;
+                    modalImage.style.display = 'block';
+                } else {
+                    modalImage.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock content %}
