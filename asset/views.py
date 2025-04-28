@@ -12,6 +12,16 @@ from .models import InventoryItem, Category
 from rest_framework import generics
 from .serializers import ItemSerializer
 
+
+from rest_framework import viewsets
+from .models import InventoryItem
+from .serializers import ItemSerializer
+
+class InventoryItemViewSet(viewsets.ModelViewSet):
+    queryset = InventoryItem.objects.all()
+    serializer_class = ItemSerializer
+
+
 #generic home page class, using django template
 
 #inherit from TemplateView class
