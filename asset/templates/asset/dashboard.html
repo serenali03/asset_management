@@ -52,7 +52,7 @@
                     <td>
                         <!--if there isn't an image found display no image text-->
                         {% if item.image %}
-                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="img-fluid" style="max-width: 100%; height: auto;">
+                            <img src="{{ item.image.url }}" alt="{{ item.name }}" class="img-fluid" style="max-height: 150px; width: auto;">
                         {% else %}
                             No Image
                         {% endif %}

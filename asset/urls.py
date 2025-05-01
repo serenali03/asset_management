@@ -20,3 +20,4 @@ urlpatterns = [
     # Automatically include ViewSet routes
     path('', include(router.urls)),
 ]
+
